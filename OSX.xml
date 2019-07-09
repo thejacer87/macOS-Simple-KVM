@@ -1,0 +1,97 @@
+<domain type='kvm' id='1' xmlns:qemu='http://libvirt.org/schemas/domain/qemu/1.0'>
+  <name>OSX</name>
+  <uuid>d06d502a-904a-4b34-847d-debf1a3d76c7</uuid>
+  <memory unit='KiB'>2097152</memory>
+  <currentMemory unit='KiB'>2097152</currentMemory>
+  <vcpu placement='static'>4</vcpu>
+  <os>
+    <type arch='x86_64' machine='q35'>hvm</type>
+    <loader readonly='yes' type='pflash'>/home/thejacer87/Mac_stuff/macOS-Simple-KVM/firmware/OVMF_CODE.fd</loader>
+    <nvram>/home/thejacer87/Mac_stuff/macOS-Simple-KVM/firmware/OVMF_VARS-1024x768.fd</nvram>
+    <boot dev='hd'/>
+  </os>
+  <features>
+    <acpi/>
+    <pae/>
+  </features>
+  <cpu>
+    <topology sockets='1' cores='4' threads='1'/>
+  </cpu>
+  <clock offset='utc'>
+    <timer name='rtc' tickpolicy='catchup'/>
+    <timer name='pit' tickpolicy='delay'/>
+    <timer name='hpet' present='no'/>
+  </clock>
+  <on_poweroff>destroy</on_poweroff>
+  <on_reboot>restart</on_reboot>
+  <on_crash>destroy</on_crash>
+  <pm>
+    <suspend-to-mem enabled='no'/>
+    <suspend-to-disk enabled='no'/>
+  </pm>
+  <devices>
+    <emulator>/usr/bin/qemu-system-x86_64</emulator>
+    <disk type='file' device='disk'>
+      <driver name='qemu' type='qcow2'/>
+      <source file='/home/thejacer87/Mac_stuff/macOS-Simple-KVM/ESP.qcow2'/>
+      <target dev='sda' bus='sata'/>
+      <address type='drive' controller='0' bus='0' target='0' unit='0'/>
+    </disk>
+    <disk type='file' device='disk'>
+      <driver name='qemu' type='qcow2'/>
+      <source file='/home/thejacer87/Mac_stuff/macOS-Simple-KVM/Hackintosh.qcow2'/>
+      <target dev='sdb' bus='sata'/>
+      <address type='drive' controller='0' bus='0' target='0' unit='1'/>
+    </disk>
+    <disk type='file' device='disk'>
+      <driver name='qemu' type='raw'/>
+      <source file='/home/thejacer87/Mac_stuff/macOS-Simple-KVM/BaseSystem.img'/>
+      <target dev='sdc' bus='sata'/>
+      <address type='drive' controller='0' bus='0' target='0' unit='2'/>
+    </disk>
+    <controller type='usb' index='0' model='piix3-uhci'>
+      <address type='pci' domain='0x0000' bus='0x02' slot='0x01' function='0x0'/>
+    </controller>
+    <controller type='sata' index='0'>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x1f' function='0x2'/>
+    </controller>
+    <interface type='network'>
+      <mac address='52:54:00:92:d4:7b'/>
+      <source network='default'/>
+      <model type='e1000-82545em'/>
+      <address type='pci' domain='0x0000' bus='0x02' slot='0x02' function='0x0'/>
+    </interface>
+    <input type='mouse' bus='virtio'>
+          <address type='pci' domain='0x0000' bus='0x00' slot='0x0e' function='0x0'/>
+    </input>
+    <input type='keyboard' bus='virtio'>
+          <address type='pci' domain='0x0000' bus='0x00' slot='0x0f' function='0x0'/>
+    </input>
+    <input type='mouse' bus='ps2'/>
+    <input type='keyboard' bus='ps2'/>
+    <graphics type='spice' autoport='yes'>
+      <listen type='address'/>
+      <image compression='off'/>
+      <gl enable='no' rendernode='/dev/dri/by-path/pci-0000:00:02.0-render'/>
+    </graphics>
+    <sound model='ich9'>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x1b' function='0x0'/>
+    </sound>
+    <video>
+      <model type='qxl' ram='65536' vram='65536' vgamem='16384' heads='1' primary='yes'/>
+    </video>
+    <memballoon model='none'/>
+  </devices>
+  <qemu:commandline>
+    <qemu:arg value='-cpu'/>
+    <qemu:arg value='Penryn,kvm=on,vendor=GenuineIntel,+invtsc,vmware-cpuid-freq=on,+pcid,+ssse3,+sse4.2,+popcnt,+avx,+aes,+xsave,+xsaveopt,check'/>
+    <qemu:arg value='-device'/>
+    <qemu:arg value='isa-applesmc,osk=ourhardworkbythesewordsguardedpleasedontsteal(c)AppleComputerInc'/>
+    <qemu:arg value='-smbios'/>
+    <qemu:arg value='type=2'/>
+    <qemu:arg value='-object'/>
+    <qemu:arg value='input-linux,id=mouse1,evdev=/dev/input/by-id/usb-1bcf_USB_Optical_Mouse-mouse'/>
+    <qemu:arg value='-object'/>
+    <qemu:arg value='input-linux,id=kbd1,evdev=/dev/input/by-id/usb-Microsoft_Natural®_Ergonomic_Keyboard_4000-event-kbd,grab_all=on,repeat=on'/>
+  </qemu:commandline>
+</domain>
